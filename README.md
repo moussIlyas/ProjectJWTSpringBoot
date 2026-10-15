@@ -1,20 +1,72 @@
-# JwtSpringApplication
+<!-- CSS: rendered by GitHub-compatible viewers that allow styles; harmless elsewhere -->
+<style>
+  .tp-hero {
+    text-align: center;
+    padding: 28px 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+  .tp-hero h1 { margin: 0; font-size: 2.1rem; letter-spacing: 0.5px; }
+  .tp-hero p  { margin: 8px 0 0; opacity: 0.9; }
+  .tp-badge   { display: inline-block; margin: 3px; }
+  .tp-card {
+    border: 1px solid #e1e4e8;
+    border-left: 5px solid #6f42c1;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    background: #faf9ff;
+  }
+  .tp-card code { background: #efe9ff; }
+</style>
 
-A Spring Boot REST API secured with **JWT authentication** and **Spring Security**.
-Users register, log in, and receive a signed token used to access protected endpoints.
+<div class="tp-hero" align="center">
+  <h1>TP 2: Authentification avec JWT et Spring Security</h1>
+  <p>Secure REST API - register, login, and access protected endpoints with a signed JWT</p>
+  <p><b>Author: Mouss Ilyas</b></p>
+</div>
 
-> Author: **Mouss Ilyas**
+<div align="center">
+
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6DB33F?logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?logo=springsecurity&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-JJWT%200.13.0-000000?logo=jsonwebtokens&logoColor=white)
+![H2](https://img.shields.io/badge/H2-in--memory-09476B?logo=h2&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?logo=apachemaven&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
+</div>
+
+---
+
+## Overview
+
+<div class="tp-card">
+
+A **Spring Boot** REST API protected by **Spring Security** and **JWT**.
+Users register, log in, and receive a signed token that is sent on every
+protected request. Passwords are hashed with **BCrypt**; the API is fully
+**stateless** (no server session).
+
+</div>
 
 ## Tech Stack
 
-- Java 21, Spring Boot 4.1.1
-- Spring Security, Spring Data JPA
-- JWT (JJWT 0.13.0)
-- H2 (in-memory), Lombok, Maven
+<table>
+  <tr><td><b>Language</b></td><td>Java 21</td></tr>
+  <tr><td><b>Framework</b></td><td>Spring Boot 4.1.1</td></tr>
+  <tr><td><b>Security</b></td><td>Spring Security + JWT (JJWT 0.13.0)</td></tr>
+  <tr><td><b>Persistence</b></td><td>Spring Data JPA · H2 (in-memory)</td></tr>
+  <tr><td><b>Build</b></td><td>Maven (wrapper)</td></tr>
+  <tr><td><b>Extra</b></td><td>Lombok</td></tr>
+</table>
 
-## Structure
+## Project Structure
 
-```
+```text
 com.projectJwtspringapplication/
 ├── JwtSpringApplication.java        # Entry point
 ├── config/
@@ -32,22 +84,26 @@ com.projectJwtspringapplication/
     └── CustomUserDetailsService.java
 ```
 
-## Endpoints
+## API Endpoints
 
-| Method | Path                 | Access        | Description                          |
-|--------|----------------------|---------------|--------------------------------------|
-| POST   | `/api/auth/register` | Public        | Create a user, returns a JWT         |
-| POST   | `/api/auth/login`    | Public        | Authenticate, returns a JWT          |
-| GET    | `/api/hello`         | Authenticated | Protected greeting                   |
-| GET    | `/api/profile`       | Authenticated | Returns the authenticated user       |
+| Method | Path                 | Access            | Description                    |
+|:------:|----------------------|-------------------|--------------------------------|
+| `POST` | `/api/auth/register` | 🟢 Public         | Create a user, returns a JWT   |
+| `POST` | `/api/auth/login`    | 🟢 Public         | Authenticate, returns a JWT    |
+| `GET`  | `/api/hello`         | 🔒 Authenticated  | Protected greeting             |
+| `GET`  | `/api/profile`       | 🔒 Authenticated  | Returns the authenticated user |
+
+<div class="tp-card">
 
 Send the token on protected calls:
 
-```
+```http
 Authorization: Bearer <token>
 ```
 
-## Configuration (`application.properties`)
+</div>
+
+## Configuration · `application.properties`
 
 ```properties
 spring.datasource.url=jdbc:h2:mem:securitydbdemo
@@ -66,44 +122,64 @@ jwt.expiration=3600000
 
 ## API Tests
 
-All requests are defined in [`requests.http`](requests.http) (open it in IntelliJ IDEA and
-click the run arrow). The screenshots below show the responses.
+All requests live in [`requests.http`](requests.http) - open it in IntelliJ IDEA
+and click ▶ next to each request. The screenshots below show the responses.
 
-### Register a new user → `201 Created`
+<details open>
+<summary><b>Register duplicate → <code>409 Conflict</code></b> (author: Mouss Ilyas)</summary>
 
-Create a user with `POST /api/auth/register`; the response contains the JWT.
+<br>
 
-### Register duplicate → `409 Conflict`
-
-Registering the same email again is rejected (author: **Mouss Ilyas**).
-
-<p align="center">
+<div align="center">
   <img src="images/registerDuplicate.png" alt="Register duplicate returns 409 Conflict" width="820">
-</p>
+</div>
 
-### Login → `200 OK`
+</details>
 
-<p align="center">
+<details open>
+<summary><b>Login → <code>200 OK</code></b></summary>
+
+<br>
+
+<div align="center">
   <img src="images/postOnLogin.png" alt="Login returns 200 with a JWT token" width="720">
-</p>
+</div>
 
-### Hello with token → `200 OK`
+</details>
 
-<p align="center">
+<details open>
+<summary><b>Hello with token → <code>200 OK</code></b></summary>
+
+<br>
+
+<div align="center">
   <img src="images/helloWithToken.png" alt="GET /api/hello with a valid token returns 200" width="820">
-</p>
+</div>
 
-### Profile with token → `200 OK`
+</details>
 
-<p align="center">
+<details open>
+<summary><b>Profile with token → <code>200 OK</code></b></summary>
+
+<br>
+
+<div align="center">
   <img src="images/profileWithToken.png" alt="GET /api/profile with a valid token returns the authenticated user" width="820">
-</p>
+</div>
+
+</details>
+
+---
 
 ## Author
 
+<div align="center">
+
 **Mouss Ilyas**
+
+</div>
 
 ## Notes
 
 - Store the JWT secret in environment variables, never in version control.
-- Passwords are hashed with BCrypt before being persisted.
+- Passwords are hashed with **BCrypt** before being persisted.
