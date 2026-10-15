@@ -1,0 +1,139 @@
+### JWT Spring Security — API requests
+### Run the app first, then click the green arrow next to each request.
+
+@baseUrl = http://localhost:8080
+@email = test@test.com
+@password = secret123
+
+### 1) Register a new user (expects 201 + token)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.test("Register returns 201", function () {
+        client.assert(response.status === 201, "Expected 201 but got " + response.status);
+    });
+    client.test("Register returns a token", function () {
+        client.assert(response.body.token != null && response.body.token.length > 0, "No token returned");
+    });
+    client.global.set("token", response.body.token);
+    client.global.set("email", "test@test.com");
+%}
+
+
+### 2) Register duplicate (expects 409 Conflict)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.test("Duplicate register returns 409", function () {
+        client.assert(response.status === 409, "Expected 409 but got " + response.status);
+    });
+%}
+
+
+### 3) Login (expects 200 + token, stored for the calls below)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.test("Login returns 200", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+    client.test("Login returns a token", function () {
+        client.assert(response.body.token != null && response.body.token.length > 0, "No token returned");
+    });
+    client.global.set("token", response.body.token);
+    client.global.set("email", "test@test.com");
+%}
+
+
+### 4) Login with wrong password (expects 403 Forbidden)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "wrong-password"
+}
+
+> {%
+    client.test("Wrong password is rejected (403)", function () {
+        client.assert(response.status === 403, "Expected 403 but got " + response.status);
+    });
+%}
+
+
+### 5) Hello WITHOUT token (expects 403, protected endpoint)
+GET {{baseUrl}}/api/hello
+
+> {%
+    client.test("Hello without token is forbidden (403)", function () {
+        client.assert(response.status === 403, "Expected 403 but got " + response.status);
+    });
+%}
+
+
+### 6) Hello WITH token (expects 200)
+GET {{baseUrl}}/api/hello
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Hello with token returns 200", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+    client.test("Hello body", function () {
+        client.assert(response.body === "Bienvenue dans l'API securisee", "Unexpected body: " + response.body);
+    });
+%}
+
+
+### 7) Profile WITH token (expects 200, returns the authenticated email)
+GET {{baseUrl}}/api/profile
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Profile with token returns 200", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+    client.test("Profile contains the logged-in user", function () {
+        client.assert(response.body.indexOf(client.global.get("email") || "test@test.com") >= 0,
+            "Unexpected body: " + response.body);
+    });
+%}
+
+
+### 8) Profile WITHOUT token (expects 403)
+GET {{baseUrl}}/api/profile
+
+> {%
+    client.test("Profile without token is forbidden (403)", function () {
+        client.assert(response.status === 403, "Expected 403 but got " + response.status);
+    });
+%}
+
+
+### 9) Profile with a tampered/invalid token (expects 403)
+GET {{baseUrl}}/api/profile
+Authorization: Bearer invalid.token.value
+
+> {%
+    client.test("Invalid token is forbidden (403)", function () {
+        client.assert(response.status === 403, "Expected 403 but got " + response.status);
+    });
+%}

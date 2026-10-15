@@ -1,4 +1,4 @@
-package hiou.hicham.jwtspringapplication.entity;
+package com.projectJwtspringapplication.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

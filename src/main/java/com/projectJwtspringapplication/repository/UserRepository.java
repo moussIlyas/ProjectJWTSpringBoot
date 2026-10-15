@@ -1,6 +1,6 @@
-package hiou.hicham.jwtspringapplication.repository;
+package com.projectJwtspringapplication.repository;
 
-import hiou.hicham.jwtspringapplication.entity.AppUser;
+import com.projectJwtspringapplication.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

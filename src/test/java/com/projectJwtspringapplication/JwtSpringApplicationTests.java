@@ -1,4 +1,4 @@
-package hiou.hicham.jwtspringapplication;
+package com.projectJwtspringapplication;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

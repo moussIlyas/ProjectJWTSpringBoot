@@ -1,4 +1,4 @@
-package hiou.hicham.jwtspringapplication.service;
+package com.projectJwtspringapplication.service;
 
 
 import io.jsonwebtoken.Claims;
@@ -17,7 +17,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    @Value("jwt.secret")
+    @Value("${jwt.secret}")
     private String jwtSecret;
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
@@ -52,5 +52,9 @@ public class JwtService {
     public boolean isTokenExpired(String token){
         Date expiration = extractAllClaimsFromToken(token).getExpiration();
         return expiration.before(new Date());
+    }
+    public boolean isTokenValid(String token, UserDetails userDetails){
+        String userName = extractUsername(token);
+        return userDetails.getUsername().equals(userName) && !isTokenExpired(token);
     }
 }
