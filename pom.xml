@@ -8,7 +8,7 @@
         <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>hiou.hicham</groupId>
+    <groupId>com.projectJwtspringapplication</groupId>
     <artifactId>JwtSpringApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>JwtSpringApplication</name>
